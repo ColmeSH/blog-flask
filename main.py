@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, flash
+from flask import Flask, request, redirect, render_template, flash, abort
 app = Flask(__name__)
 app.secret_key = 'myReallysecretKey'
 
@@ -15,40 +15,33 @@ def generate_id():
         return 1
 
 
+@app.errorhandler(404)
+def get_not_found(*args, **kw):
+    flash('Blog Not Found!', 'danger')
+    return redirect('/')
+
+
 def search_blog(blogid):
+    try:
+        blogid = int(blogid)
+    except ValueError:
+        abort(404)
+    
     for index, b in enumerate(blogs):
         if b['id'] == blogid:
             return index
-    return -1
+    abort(404)
 
 
 @app.route('/blog/<blogid>')
 def blog(blogid):
-    try:
-        blogid = int(blogid)
-    except ValueError:
-        flash('Blog Not Found!', 'danger')
-        return redirect('/')
-    
     index = search_blog(blogid)
-    if index != -1:
-        return render_template('detail.html', blog=blogs[index])
-    flash('Blog Not Found!', 'error')
-    return redirect('/')
-
-
+    return render_template('detail.html', blog=blogs[index])
+    
+    
 @app.route('/blog/<blogid>/update', methods=['GET', 'POST'])
 def update(blogid):
-    try:
-        blogid = int(blogid)
-    except ValueError:
-        flash('Blog Not Found!', 'danger')
-        return redirect('/')
-    
     index = search_blog(blogid)
-    if index == -1:
-        flash('Blog Not Found!', 'danger')
-        return redirect('/')
     
     if request.method == 'POST':
         if not request.form['text'] or not request.form['title']:
@@ -63,15 +56,7 @@ def update(blogid):
 
 @app.route('/blog/<blogid>/remove', methods=['POST'])
 def remove(blogid):
-    try:
-        blogid = int(blogid)
-    except ValueError:
-        flash('Blog Not Found!', 'danger')
-        return redirect('/')
     index = search_blog(blogid)
-    if index == -1:
-        flash('Blog Not Found!', 'danger')
-        return redirect('/')
     blogs.remove(blogs[index])
     flash('Blog Removed!', 'success')
     return redirect('/')
