@@ -2,7 +2,6 @@
 {% block container %}
 
 {% if mode == 'create' %}
-
     <ol class="breadcrumb">
         <li><a href="/">Home</a></li>
         <li class="active">Create Blog</li>
@@ -10,7 +9,7 @@
     <h1>Create Blog</h1>
     <div class="col-md-6">
         <form method="post" action="/create">
-    {% elif mode == 'update' %}
+{% elif mode == 'update' %}
         <ol class="breadcrumb">
             <li><a href="/">Home</a></li>
             <li><a href="/blog/{{blog.id}}">{{blog.title}}</a></li>
@@ -19,7 +18,7 @@
         <h1>Update Blog</h1>
         <div class="col-md-6">
         <form method="post" action="/blog/{{blog.id}}/update">
-    {% endif %}
+{% endif %}
             <div class="form-group">
                 <label for="title">Title</label>
                 <input type="text" name="title" class="form-control" id="title" placeholder="Title.." value="{{blog.title}}">
