@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block container %}
+    <h1>Hello People, This is my {% if blogs|length == 0 %} EMPTY :( {% endif%}Blog!</h1>
+    {% for b in blogs %}
+        <h3>{{b.title}} </h3>
+        <p class="lead">{{b.text[:10]}}... <a class="btn btn-info" href="/blog/{{b.id}}">View More</a></p>
+
+    {% endfor %}
+{% endblock %}
